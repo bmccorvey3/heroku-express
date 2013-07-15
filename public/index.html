@@ -34,9 +34,10 @@
         </div>
         <div class="container">
             <div class = "map_info">
-                Hover over a country to see its Rank and IDI value.<br><br>
-                Greener countries are more technologically advanced, 
-                while redder countries are less technologically advanced. 
+                <ul class "map_in">
+                    <li>Hover over a country to see its Rank and IDI value.</li>
+                    <li>Greener countries are more technologically advanced, while redder countries are less technologically advanced.</li>
+                </ul>
 
                 <!-- Add details on how to select countries and change color -->
                 <!-- Change colors on map. Green is technically advanced, gray is no data
@@ -84,6 +85,7 @@
         <script src="js/vendor/datamaps.js"></script>
         <script src="js/choropleth.js"></script>
         <script src="js/vendor/d3.v3.min.js"></script>
+        <script src="http://d3js.org/topojson.v1.min.js"></script>
         <!-- This is the Google Maps v3 API -->
         <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
 

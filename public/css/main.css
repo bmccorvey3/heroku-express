@@ -182,6 +182,14 @@ h2 {
 
 #states, 
 
+.map_in, .map_in>li {
+    padding-bottom: 20px;
+}
+
+.map_in {
+    list-style-type: none;
+}
+
 .menu, .menu > li {
     display: inline;
 }
