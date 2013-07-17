@@ -1,6 +1,6 @@
 $("#computers").click(function() {
     if (lastCountryString == ""){
-        alert("Please select a country first.");
+        bootbox.alert("Please select a country first.");
     }
     if (lastCountryString != "" && myData[lastCountryString].idi != "No Data") {
 
@@ -23,7 +23,7 @@ $("#computers").click(function() {
 $("#internet").click(function() {
 
     if (lastCountryString == ""){
-        alert("Please select a country first.");
+        bootbox.alert("Please select a country first.");
     }
     if (lastCountryString != "" && myData[lastCountryString].idi != "No Data") {
           
@@ -47,7 +47,7 @@ $("#mobile_phones").click(function() {
 
 
    if (lastCountryString == ""){
-        alert("Please select a country first.");
+        bootbox.alert("Please select a country first.");
     }
     if (lastCountryString != "" && myData[lastCountryString].idi != "No Data") {
           
@@ -70,7 +70,7 @@ $("#mobile_phones").click(function() {
 $("#broadband").click(function() {
           
     if (lastCountryString == ""){
-        alert("Please select a country first.");
+        bootbox.alert("Please select a country first.");
     }
     if (lastCountryString != "" && myData[lastCountryString].idi != "No Data") {
           
@@ -94,7 +94,7 @@ $("#education").click(function() {
        
 
     if (lastCountryString == ""){
-        alert("Please select a country first.");
+        bootbox.alert("Please select a country first.");
     }
     if (lastCountryString != "" && myData[lastCountryString].idi != "No Data") {
           
@@ -138,6 +138,7 @@ $("#computers,#internet,#mobile_phones,#broadband,#education").on('click', funct
     if (lastCountryString != ""){
 
         if (this.id == "computers") {
+         /*   bootbox.prompt("what is your name?"); */ //KEY PROMPT HERE
             total += incre_comp;
         }    
         else if (this.id == "internet") {
