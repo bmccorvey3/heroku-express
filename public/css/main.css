@@ -109,6 +109,10 @@ textarea {
     position: relative;
 }
 
+#states .active {
+    fill: orange;
+}
+
 .buttons {
     padding-top: 20px;
     padding-bottom: 20px;
@@ -180,7 +184,7 @@ h2 {
     cursor: hand;
 }
 
-#states, 
+
 
 .map_in, .map_in>li {
     padding-bottom: 20px;

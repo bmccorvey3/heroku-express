@@ -1,4 +1,7 @@
 $("#computers").click(function() {
+    if (lastCountryString == ""){
+        alert("Please select a country first.");
+    }
     if (lastCountryString != "" && myData[lastCountryString].idi != "No Data") {
 
 
@@ -18,17 +21,24 @@ $("#computers").click(function() {
 });
 
 $("#internet").click(function() {
+
+    if (lastCountryString == ""){
+        alert("Please select a country first.");
+    }
+    if (lastCountryString != "" && myData[lastCountryString].idi != "No Data") {
           
-    myData[lastCountryString].idi = parseFloat(updateIDI(lastCountryString, "#internet")).toFixed(2);
-    myData[lastCountryString].fillKey = String(Math.floor(myData[lastCountryString].idi/2));
+        myData[lastCountryString].idi = parseFloat(updateIDI(lastCountryString, "#internet")).toFixed(2);
+        myData[lastCountryString].fillKey = String(Math.floor(myData[lastCountryString].idi/2));
     
 
-    $("#map_world").empty();
-    refreshMap();
+        $("#map_world").empty();
+        refreshMap();
 
-    $("path").click(function() {
+        $("path").click(function() {
         lastCountryString = $("#hoverid").attr("country");
-    });
+        });
+
+    }
 
 
 });
@@ -36,30 +46,46 @@ $("#internet").click(function() {
 $("#mobile_phones").click(function() {
 
 
-    myData[lastCountryString].idi = parseFloat(updateIDI(lastCountryString, "#mobile_phones")).toFixed(2);
-    myData[lastCountryString].fillKey = String(Math.floor(myData[lastCountryString].idi/2));
+   if (lastCountryString == ""){
+        alert("Please select a country first.");
+    }
+    if (lastCountryString != "" && myData[lastCountryString].idi != "No Data") {
+          
+        myData[lastCountryString].idi = parseFloat(updateIDI(lastCountryString, "#mobile_phones")).toFixed(2);
+        myData[lastCountryString].fillKey = String(Math.floor(myData[lastCountryString].idi/2));
+    
 
-    $("#map_world").empty();
-    refreshMap();
+        $("#map_world").empty();
+        refreshMap();
 
-    $("path").click(function() {
+        $("path").click(function() {
         lastCountryString = $("#hoverid").attr("country");
-    });
+        });
+
+    }
 
 
 });
 
 $("#broadband").click(function() {
           
-    myData[lastCountryString].idi = parseFloat(updateIDI(lastCountryString, "#broadband")).toFixed(2);
-    myData[lastCountryString].fillKey = String(Math.floor(myData[lastCountryString].idi/2));
+    if (lastCountryString == ""){
+        alert("Please select a country first.");
+    }
+    if (lastCountryString != "" && myData[lastCountryString].idi != "No Data") {
+          
+        myData[lastCountryString].idi = parseFloat(updateIDI(lastCountryString, "#broadband")).toFixed(2);
+        myData[lastCountryString].fillKey = String(Math.floor(myData[lastCountryString].idi/2));
+    
 
-    $("#map_world").empty();
-    refreshMap();
+        $("#map_world").empty();
+        refreshMap();
 
-    $("path").click(function() {
+        $("path").click(function() {
         lastCountryString = $("#hoverid").attr("country");
-    });
+        });
+
+    }
 
 
 });
@@ -67,15 +93,23 @@ $("#broadband").click(function() {
 $("#education").click(function() {
        
 
-    myData[lastCountryString].idi = parseFloat(updateIDI(lastCountryString, "#education")).toFixed(2);
-    myData[lastCountryString].fillKey = String(Math.floor(myData[lastCountryString].idi/2));
+    if (lastCountryString == ""){
+        alert("Please select a country first.");
+    }
+    if (lastCountryString != "" && myData[lastCountryString].idi != "No Data") {
+          
+        myData[lastCountryString].idi = parseFloat(updateIDI(lastCountryString, "#education")).toFixed(2);
+        myData[lastCountryString].fillKey = String(Math.floor(myData[lastCountryString].idi/2));
     
-    $("#map_world").empty();
-    refreshMap();
 
-    $("path").click(function() {
+        $("#map_world").empty();
+        refreshMap();
+
+        $("path").click(function() {
         lastCountryString = $("#hoverid").attr("country");
-    });      
+        });
+
+    }
 
 
 });
@@ -97,29 +131,32 @@ var incre_literacy = 15000;
 
 $("#computers,#internet,#mobile_phones,#broadband,#education").on('click', function() {
     // the current total
-    var total = parseInt($('#output').text());
-
+    var total = parseInt($('#output').text().substring(1));
 
     // increment the total based on the id
 
-    if (this.id == "computers") {
-        total += incre_comp;
-    }    
-    else if (this.id == "internet") {
-        total += incre_web;
-    }
-    else if (this.id == "mobile_phones"){
-        total += incre_mphone;
-    }
-    else if (this.id == "broadband"){
-        total += incre_broadband;
-    }
-    else if (this.id == "education"){
-        total += incre_literacy;
+    if (lastCountryString != ""){
+
+        if (this.id == "computers") {
+            total += incre_comp;
+        }    
+        else if (this.id == "internet") {
+            total += incre_web;
+        }
+        else if (this.id == "mobile_phones"){
+            total += incre_mphone;
+        }
+        else if (this.id == "broadband"){
+            total += incre_broadband;
+        }
+        else if (this.id == "education"){
+            total += incre_literacy;
+        }
+
     }
 
     // update the div's total
-    $('#output').text(total);
+    $('#output').text("$" + total);
 
 });
 
@@ -2251,7 +2288,6 @@ function refreshMap() {
       geography_config: { 
         highlightBorderColor: '#222',
         highlightOnHover: true,
-        highlightOnClick: true,
         popupTemplate: _.template([
             '<div id="hoverid" country="<%=data.cid%>" class="hoverinfo"><strong><%= geography.properties.name %></strong>',
             '<br>Rank 2011: <%=data.rank%>',
