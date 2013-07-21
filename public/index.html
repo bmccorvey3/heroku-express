@@ -15,7 +15,7 @@
         <link rel="stylesheet" href="css/vendor/bootstrap.min.css">
         <link rel="stylesheet" href="css/vendor/bootstrap-responsive.min.css">
         <link rel="stylesheet" href="css/main.css">
-        <script src="js/vendor/modernizr-2.6.2.min.js"></script>
+        <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
     </head>
     
 
@@ -25,12 +25,14 @@
                 <div class="logo">
                     <a href="index.html">Digital Divide</a>
                 </div>
-                <ul class="menu">
-                    <li><a href="about.html">About</a></li>
-                    <li><a href="index.html">Map</a></li>
-               <!--     <li><a href="map.html">Map</a></li> -->
-                    <li><a href="instruction.html">Instructions</a></li>
-                </ul>
+                <nav>
+                    <ul class="menu">
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="index.html">Map</a></li>
+                   <!--     <li><a href="map.html">Map</a></li> -->
+                        <li><a href="instruction.html">Instructions</a></li>
+                    </ul>
+                </nav>
             </div>
         </div>
         <div class="container">
@@ -44,15 +46,6 @@
                     add data on Panama, red is slightly advanced, orange, yellow, etc -->
 
             </div>
-            
-            <div class="container2">
-                <div id="map_world"></div>
-            </div>
-
-            <div class = "money_buttons">
-                <div id="cost" class="btn btn-large btn-primary disabled">Cost</div>
-                <div id="output" class= "btn btn-small btn-primary disabled"><span>$</span>0</div>
-            </div>
 
             <div class="func_buttons">
 
@@ -64,6 +57,23 @@
                     <span><div id="reset" class="btn btn-inverse">Reset</div></span>
 
             </div>
+
+            <div class="ui-widget">
+                <label for="tags">Enter a country: </label>
+                <input id="tags" />
+                <div id="wha_country"></div>
+                <div id="costoutput">
+                    <div id="cost" class="btn btn-small btn-primary disabled">Cost</div>
+                    <div id="output" class= "btn btn-small btn-primary disabled"><span>$</span>0</div>
+                </div>
+            </div>
+            
+            <div class="container2">
+                <div id="map_world"></div>
+            </div>
+
+            
+
 
           <!--  <div id="google_map"></div> 
 
@@ -82,6 +92,7 @@
         <!-- Javascript files at the end -->
         <script src="js/vendor/jquery-1.9.1.min.js"></script>
         <script src="js/vendor/bootstrap.min.js"></script>
+        <script src="js/vendor/modernizr-2.6.2.min.js"></script>
         <script src="js/plugins.js"></script>
         <script src="js/main.js"></script>
         <script src="js/vendor/datamaps.js"></script>
@@ -90,8 +101,9 @@
         <script src="http://d3js.org/topojson.v1.min.js"></script>
         <script src="js/zoom.js"></script>
         <script src="js/vendor/bootbox.js"></script>
+        <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
         <script>
-            bootbox.alert("Before you begin, click on Instructions, located in the top-right corner.")
+          /*  bootbox.alert("Before you begin, click on Instructions, located in the top-right corner.") */
         </script>
 
         <script>

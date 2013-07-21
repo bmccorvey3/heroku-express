@@ -1,25 +1,3 @@
-$("#computers").click(function() {
-    if (lastCountryString == ""){
-        bootbox.alert("Please select a country first.");
-    }
-    if (lastCountryString != "" && myData[lastCountryString].idi != "No Data") {
-
-
-        myData[lastCountryString].idi = parseFloat(updateIDI(lastCountryString, "#computers")).toFixed(2);
-        myData[lastCountryString].fillKey = String(Math.floor(myData[lastCountryString].idi/2));
-
-
-        $("#map_world").empty();
-        refreshMap();
-
-        $("path").click(function() {
-            lastCountryString = $("#hoverid").attr("country");
-        });
-
-
-    }
-});
-
 $("#internet").click(function() {
 
     if (lastCountryString == ""){
@@ -35,7 +13,9 @@ $("#internet").click(function() {
         refreshMap();
 
         $("path").click(function() {
-        lastCountryString = $("#hoverid").attr("country");
+            lastCountryString = $("#hoverid").attr("country");
+            console.log(lastCountryString);
+            $("#wha_country").text("You are improving: " + myData[lastCountryString].data.nam);
         });
 
     }
@@ -99,7 +79,7 @@ $("#education").click(function() {
     if (lastCountryString != "" && myData[lastCountryString].idi != "No Data") {
           
         myData[lastCountryString].idi = parseFloat(updateIDI(lastCountryString, "#education")).toFixed(2);
-        myData[lastCountryString].fillKey = String(Math.floor(myData[lastCountryString].idi/2));
+        myData[lastCountryString].fillKey = Math.floor(myData[lastCountryString].idi/2);
     
 
         $("#map_world").empty();
@@ -120,14 +100,13 @@ $("#reset").click(function() {
 
 });
 
+var incre_comp = 200;
+var incre_web = 12;
+var incre_mphone = 50;
+var incre_broadband = 57;
+var incre_literacy = 1;
 
-
-var incre_comp = 1000*200;
-var incre_web = 10000;
-var incre_mphone = 25000;
-var incre_broadband = 30000;
-var incre_literacy = 15000;
-
+var real_total = 0;
 
 $("#computers,#internet,#mobile_phones,#broadband,#education").on('click', function() {
     // the current total
@@ -135,50 +114,96 @@ $("#computers,#internet,#mobile_phones,#broadband,#education").on('click', funct
 
     // increment the total based on the id
 
-    if (lastCountryString != ""){
 
-        if (this.id == "computers") {
-         /*   bootbox.prompt("what is your name?"); */ //KEY PROMPT HERE
-            total += incre_comp;
-        }    
+
+    // COST NOT CALCULATING CORRECTLY WITH COMMAS HELP!!!!!!!!!!!!!!!!!
+
+    if (lastCountryString != ""){
+        if (this.id == "computers" && myData[lastCountryString].idi != "No Data") {
+            bootbox.prompt("You are sending computers to " + myData[lastCountryString].data.nam + ". Each computer costs $200. How many computers" +
+                " would you like to send?", function(num){
+                    if (num<= 0 || num%1 != 0) {
+                        bootbox.alert("Please enter an integer value greater than 0.");
+                    }
+                    else{
+                        // Set the total number.
+                        total += (num *incre_comp);
+                        real_total += total;
+                        $('#output').text("$" + convertNumToStringWithCommas(real_total));
+
+                        // Update the data.
+                        myData[lastCountryString].idi = parseFloat(updateIDI(lastCountryString, "#computers", num)).toFixed(2);
+
+                        myData[lastCountryString].fillKey = String(Math.floor(myData[lastCountryString].idi/2));
+                       
+
+                        if(myData[lastCountryString].idi >10){
+                            myData[lastCountryString].fillKey = fill(Math.floor(myData[lastCountryString].idi/2));
+                            myData[lastCountryString].idi = 10;
+                            bootbox.alert("Congrulations! You have fully improved " + myData[lastCountryString].data.nam + " However, " + 
+                                "you spent way too much money.");
+                        }
+
+                        // Clear the map.
+                        $("#map_world").empty();
+                        refreshMap();
+
+
+                        // Re-set the click function on every country path since we have emptied the map (deleted all the click functionality too).
+                        $("path").click(function() {
+                        lastCountryString = $("#hoverid").attr("country");
+                        console.log(lastCountryString);
+                        $("#wha_country").text("You are improving: " + myData[lastCountryString].data.nam);
+                        });
+                    }
+                }); 
+            /*total += incre_comp;*/
+        }
         else if (this.id == "internet") {
+            
             total += incre_web;
         }
         else if (this.id == "mobile_phones"){
+           
             total += incre_mphone;
         }
         else if (this.id == "broadband"){
+           
             total += incre_broadband;
         }
         else if (this.id == "education"){
+           
             total += incre_literacy;
         }
-
+    }
+    else {
+        bootbox.alert("Please select a country first.");
     }
 
     // update the div's total
-    $('#output').text("$" + total);
+    $('#output').text("$" + 0);
 
 });
 
-function updateIDI(countryString, button){
+
+function updateIDI(countryString, button, amount){
     var country = myData[countryString].data;
     for (value in country) console.log(value+": "+country[value]);
     if (button!=""){
-        if (button = "#computers"){
-            country.percomp += (10000000*400/country.population);
+        if (button = "#computers" && amount !=0){
+            country.percomp += (1000*amount*400/country.population);
         }
-        else if (button = "#internet"){
-            country.perweb += (10000000*400/country.population);
+        else if (button = "#internet" && amount != 0){
+            country.perweb += (1000*amount*400/country.population);
         }
-        else if (button = "#mobile_phones"){
-            country.mphone += (10000000*100/country.population);
+        else if (button = "#mobile_phones" && amount !=0){
+            country.mphone += (1000*amount*100/country.population);
         }
-        else if (button = "#broadband"){
-            country.fbroadband += (10000000*100/country.population);
+        else if (button = "#broadband" && amount != 0){
+            country.fbroadband += (1000*amount*100/country.population);
         }
-        else if (button = "#education"){
-            country.literacy += (10000000/country.population);
+        else if (button = "#education" && amount != 0){
+            country.literacy += (1000*amount/country.population);
         }
     }
    
@@ -218,6 +243,7 @@ function updateIDI(countryString, button){
     console.log(d2);
     console.log(e2);
 
+
     country.idi = (((a2+b2+c2+d2+e2)*.4) + ((f2+g2+h2)*.4) + ((i2+j2+k2)*.2)) *10;
 
     console.log("this");
@@ -251,13 +277,30 @@ function country (nam,rank,idi,population,fphone,mphone,bandwidth,percomp,perweb
 }
 
 function fill (idi) {
+    col = '4';
     if (idi>=0 && idi<2) {col = '0';} 
     else if (idi>=2 && idi<4){col = '1';}
     else if (idi>=4 && idi<6){col = '2';}
     else if (idi>=6 && idi<8){col = '3';}
-    else if (idi>=8 && idi<=10){col = '4';}
-    else if (idi>10){col = '4'}
+    else if (idi >= 10) {col = '5';}
     return col;
+}
+
+function removeCommas(num) {
+    num = parseFloat(value1.replace(/,/g,''));
+    return num;
+}
+
+function convertNumToStringWithCommas(num) {
+    theString = String(num);
+    theNewString = "";
+    for (i = theString.length-1; i >=0; i--) {
+        theNewString = theString[i] + theNewString;
+        if ((theString.length - i)%3 == 0 && i != 0) {
+            theNewString = "," + theNewString;
+        }
+    }
+    return theNewString;
 }
 
 var ALB = new country("Albania",80,3.78,3011405,10.5,96.4,19038,16.4,15.7,49,4.3,8.8,95.9,88.9,36.7);
@@ -284,14 +327,14 @@ var KHM = new country("Cambodia",121,1.96,15205539,3.7,69.9,13530,4.9,2.8,3.1,0.
 var CMR = new country("Cameroon",138,1.60,20549221,3.3,52.4,322,6.2,3,5,0,0,70.7,42.2,11.5);
 var CAN = new country("Canada",22,7.04,34568211,47.9,75.3,70150,86,82.8,83,32,32.9,99,101.3,66.6);
 var CPV = new country("Cape Verde",101,3.08,531046,14.9,79.2,5806,12.2,8.5,32,4.3,3,84.8,87.5,17.8);
-var CAF = new country("Central African Rep.",153,0.97,5166510,0.1,25,203,2.5,1.9,2.2,0,0,55.2,12.6,2.6);
+var CAF = new country("Central African Republic",153,0.97,5166510,0.1,25,203,2.5,1.9,2.2,0,0,55.2,12.6,2.6);
 var TCD = new country("Chad",154,0.94,11193452,0.3,31.8,228,2,1.6,1.9,0,0,33.6,25.7,2.2);
 var CHL = new country("Chile",55,5.01,17216945,19.5,129.7,20414,50.6,38.8,53.9,11.6,17.1,98.6,87.9,59.2);
 var CHN = new country("China",78,3.88,1349585838,21.2,73.2,2692,38,30.9,38.3,11.6,9.5,94,81.2,25.9);
 var COL = new country("Colombia",76,3.93,45745783,15.2,98.5,16796,29.9,23.4,40.4,6.9,3.7,93.2,96.4,39.1);
 var COM = new country("Comoros",130,1.68,752288,3.1,28.7,4003,5.8,2.9,5.5,0,0,74.2,46.3,7.9);
 var COG = new country("Congo",146,1.30,4492689,0.2,93.8,155,3.9,1,5.6,0,1.2,66.8,37.7,5.5);
-var COD = new country("Congo (Dem. Rep.)",140,1.60,75507308,0.1,23.1,984,1,1,1.2,0,0,66.8,37.7,6.2);
+var COD = new country("Democratic Republic of the Congo",140,1.60,75507308,0.1,23.1,984,1,1,1.2,0,0,66.8,37.7,6.2);
 var CRI = new country("Costa Rica",71,4.37,4695942,31.5,92.2,36216,45.3,33.6,42.1,8.7,2,96.1,99.7,25.6);
 var CIV = new country("Côte d'Ivoire",129,1.69,22400835,1.3,86.4,18044,2,1.2,2.2,0.1,0,55.3,29.9,8.9);
 var HRV = new country("Croatia",42,5.75,4475611,40.1,116.4,19948,64,61.4,70.7,19.5,6.6,98.8,95.3,49.2);
@@ -300,7 +343,7 @@ var CYP = new country("Cyprus",44,5.73,1155403,36.3,97.7,53569,66.4,57.4,57.7,18
 var CZE = new country("Czech Republic",32,6.17,10162921,20.9,121.6,91064,69,66.6,73,15.7,43.1,99,90.4,60.7);
 var DNK = new country("Denmark",3,8.29,5556452,45.1,126.5,159511,90.3,90.1,90,38.2,80.2,99,117.4,74.4);
 var DJI = new country("Djibouti",128,1.74,792198,2,21.3,13409,14.3,3.9,7,1.2,0,73,36.1,4.9);
-var DOM = new country("Dominican Rep.",93,3.34,10219630,10.4,87.2,11205,18.9,11.8,35.5,4,7.7,88.2,76.4,34.2);
+var DOM = new country("Dominican Republic",93,3.34,10219630,10.4,87.2,11205,18.9,11.8,35.5,4,7.7,88.2,76.4,34.2);
 var ECU = new country("Ecuador",82,3.68,15439429,15.1,104.5,27742,28.8,16.9,31.4,4.2,10.3,84.2,80.4,39.8);
 var EGY = new country("Egypt",83,3.66,85294388,10.6,101.1,6754,36.4,30.5,35.6,2.2,21,66.4,80.5,30.4);
 var SLV = new country("El Salvador",103,2.99,6108590,15.3,125.8,4176,14.3,12,17.7,3.3,3.6,84.1,65,23.4);
@@ -407,7 +450,7 @@ var UGA = new country("Uganda",132,1.67,34758809,1.3,48.4,1752,4,4.5,13,0.3,2.8,
 var UKR = new country("Ukraine",67,4.4,44573205,28.1,123,9835,30.7,26,30.6,7,4.4,99.7,95.6,79.5);
 var ARE = new country("United Arab Emirates",45,5.64,5473972,23.1,148.6,27609,77,67,70,11,21.7,90,92.3,30.4);
 var GBR = new country("United Kingdom",9,7.75,63395574,53.2,130.8,166073,84,85.1,82,32.7,62.3,99,101.8,58.5);
-var USA = new country("United States",15,7.48,316668567,47.9,105.9,47174,77.2,76,77.9,28.7,65.5,99,96,94.8);
+var USA = new country("United States of America",15,7.48,316668567,47.9,105.9,47174,77.2,76,77.9,28.7,65.5,99,96,94.8);
 var URY = new country("Uruguay",50,5.24,3324460,28.5,140.8,32078,62,39.4,51.4,13.5,9,98.3,90.2,63.3);
 var UZB = new country("Uzbekistan",102,3.05,28661637,6.9,91.6,579,6.3,7.8,30.2,0.5,18.4,99.3,105.7,8.9);
 var VEN = new country("Venezuela",77,3.92,28459085,24.9,97.8,8108,19,16,40.2,0.9,4.2,95.2,82.5,78.1);
@@ -416,6 +459,649 @@ var YEM = new country("Yemen",126,1.76,25408288,4.3,47,1082,4.6,4,14.9,0.4,0.1,6
 var ZMB = new country("Zambia",135,1.65,14222233,0.6,60.6,452,2.7,2.4,11.5,0.1,0.4,70.9,45.5,2.4);
 var ZWE = new country("Zimbabwe",115,2.24,13182908,2.8,72.1,1748,5.9,4,15.7,0.3,14.9,91.9,41,6.2);
 
+$(function() {
+    var avail_countries = [   
+
+        "Albania",
+        "Algeria",
+        "Antigua & Barbuda",
+        "Argentina",
+        "Australia",
+        "Austria",
+        "Azerbaijan",
+        "Bahrain",
+        "Barbados",
+        "Belarus",
+        "Belgium",
+        "Benin",
+        "Bhutan",
+        "Bolivia",
+        "Bosnia and Herzegovina",
+        "Botswana",
+        "Brazil",
+        "Brunei Darussalam",
+        "Bulgaria",
+        "Burkina Faso",
+        "Cambodia",
+        "Cameroon",
+        "Canada",
+        "Cape Verde",
+        "Central African Republic",
+        "Chad",
+        "Chile",
+        "China",
+        "Colombia",
+        "Comoros",
+        "Congo",
+        "Democratic Republic of the Congo",
+        "Costa Rica",
+        "Côte d'Ivoire",
+        "Croatia",
+        "Cuba",
+        "Cyprus",
+        "Czech Republic",
+        "Denmark",
+        "Djibouti",
+        "Dominican Republic",
+        "Ecuador",
+        "Egypt",
+        "El Salvador",
+        "Eritrea",
+        "Estonia",
+        "Ethiopia",
+        "Fiji",
+        "Finland",
+        "France",
+        "Gabon",
+        "Gambia",
+        "Georgia",
+        "Germany",
+        "Ghana",
+        "Greece",
+        "Guinea",
+        "Guyana",
+        "Honduras",
+        "Hong Kong",
+        "Hungary",
+        "Iceland",
+        "India",
+        "Indonesia",
+        "Iran",
+        "Ireland",
+        "Israel",
+        "Italy",
+        "Jamaica",
+        "Japan",
+        "Jordan",
+        "Kazakhstan",
+        "Kenya",
+        "Korea",
+        "Lao",
+        "Latvia",
+        "Lebanon",
+        "Liberia",
+        "Lithuania",
+        "Luxembourg",
+        "Macao",
+        "Madagascar",
+        "Malawi",
+        "Malaysia",
+        "Maldives",
+        "Mali",
+        "Malta",
+        "Mauritania",
+        "Mauritius",
+        "Mexico",
+        "Moldova",
+        "Mongolia",
+        "Morocco",
+        "Mozambique",
+        "Myanmar",
+        "Namibia",
+        "Nepal",
+        "Netherlands",
+        "New Zealand",
+        "Nicaragua",
+        "Niger",
+        "Nigeria",
+        "Norway",
+        "Oman",
+        "Pakistan",
+        "Panama",
+        "Papua New Guinea",
+        "Paraguay",
+        "Peru",
+        "Philippines",
+        "Poland",
+        "Portugal",
+        "Qatar",
+        "Romania",
+        "Russia",
+        "Rwanda",
+        "Santa Lucia",
+        "Saudi Arabia",
+        "Senegal",
+        "Serbia",
+        "Seychelles",
+        "Singapore",
+        "Slovakia",
+        "Slovenia",
+        "Solomon Islands",
+        "South Africa",
+        "Spain",
+        "Sri Lanka",
+        "St. Vincent and the Grenadines",
+        "Swaziland",
+        "Sweden",
+        "Switzerland",
+        "Syria",
+        "Tanzania",
+        "Macedonia",
+        "Thailand",
+        "Togo",
+        "Tonga",
+        "Trinidad & Tobago",
+        "Tunisia",
+        "Turkey",
+        "Turkmenistan",
+        "Tuvalu",
+        "Uganda",
+        "Ukraine",
+        "United Arab Emirates",
+        "United Kingdom",
+        "United States of America",
+        "Uruguay",
+        "Uzbekistan",
+        "Venezuela",
+        "Vietnam",
+        "Yemen",
+        "Zambia",
+        "Zimbabwe"
+
+    ];
+
+    $( "#tags" ).autocomplete({
+      source: avail_countries
+    });
+});
+
+$( "#tags" ).on( "autocompleteselect", function( e, ui ) {
+    lastCountryString = countryData[ui.item.value].id;
+    $("#wha_country").text("You are improving: " + myData[lastCountryString].data.nam);
+
+} );
+
+
+var countryData = {
+
+
+        "Albania" : {
+            "id" : "ALB"
+        },
+        "Algeria" : {
+            "id" : "DZA"
+        },
+        "Antigua & Barbuda" : {
+            "id" : "ATG"
+        },
+        "Argentina" : {
+            "id" : "ARG"
+        },
+        "Australia" : {
+            "id" : "AUS"
+        },
+        "Austria" : {
+            "id" : "AUT"
+        },
+        "Azerbaijan" : {
+            "id" : "AZE"
+        },
+        "Bahrain" : {
+            "id" : "BHR"
+        },
+        "Barbados" : {
+            "id" : "BRB"
+        },
+        "Belarus" : {
+            "id" : "BLR"
+        },
+        "Belgium" : {
+            "id" : "BEL"
+        },
+        "Benin" : {
+            "id" : "BEN"
+        },
+        "Bhutan" : {
+            "id" : "BTN"
+        },
+        "Bolivia" : {
+            "id" : "BOL"
+        },
+        "Bosnia and Herzegovina" : {
+            "id" : "BIH"
+        },
+        "Botswana" : {
+            "id" : "BWA"
+        },
+        "Brazil" : {
+            "id" : "BRA"
+        },
+        "Brunei Darussalam" : {
+            "id" : "BRN"
+        },
+        "Bulgaria" : {
+            "id" : "BGR"
+        },
+        "Burkina Faso" : {
+            "id" : "BFA"
+        },
+        "Cambodia" : {
+            "id" : "KHM"
+        },
+        "Cameroon" : {
+            "id" : "CMR"
+        },
+        "Canada" : {
+            "id" : "CAN"
+        },
+        "Cape Verde" : {
+            "id" : "CPV"
+        },
+        "Central African Republic" : {
+            "id" : "CAF"
+        },
+        "Chad" : {
+            "id" : "TCD"
+        },
+        "Chile" : {
+            "id" : "CHL"
+        },
+        "China" : {
+            "id" : "CHN"
+        },
+        "Colombia" : {
+            "id" : "COL"
+        },
+        "Comoros" : {
+            "id" : "COM"
+        },
+        "Congo" : {
+            "id" : "COG"
+        },
+        "Democratic Republic of the Congo" : {
+            "id" : "COD"
+        },
+        "Costa Rica" : {
+            "id" : "CRI"
+        },
+        "Côte d'Ivoire" : {
+            "id" : "CIV"
+        },
+        "Croatia" : {
+            "id" : "HRV"
+        },
+        "Cuba" : {
+            "id" : "CUB"
+        },
+        "Cyprus" : {
+            "id" : "CYP"
+        },
+        "Czech Republic" : {
+            "id" : "CZE"
+        },
+        "Denmark" : {
+            "id" : "DNK"
+        },
+        "Djibouti" : {
+            "id" : "DJI"
+        },
+        "Dominican Republic" : {
+            "id" : "DOM"
+        },
+        "Ecuador" : {
+            "id" : "ECU"
+        },
+        "Egypt" : {
+            "id" : "EGY"
+        },
+        "El Salvador" : {
+            "id" : "SLV"
+        },
+        "Eritrea" : {
+            "id" : "ERI"
+        },
+        "Estonia" : {
+            "id" : "EST"
+        },
+        "Ethiopia" : {
+            "id" : "ETH"
+        },
+        "Fiji" : {
+            "id" : "FJI"
+        },
+        "Finland" : {
+            "id" : "FIN"
+        },
+        "France" : {
+            "id" : "FRA"
+        },
+        "Gabon" : {
+            "id" : "GAB"
+        },
+        "Gambia" : {
+            "id" : "GMB"
+        },
+        "Georgia" : {
+            "id" : "GEO"
+        },
+        "Germany" : {
+            "id" : "DEU"
+        },
+        "Ghana" : {
+            "id" : "GHA"
+        },
+        "Greece" : {
+            "id" : "GRC"
+        },
+        "Guinea" : {
+            "id" : "GIN"
+        },
+        "Guyana" : {
+            "id" : "GUY"
+        },
+        "Honduras" : {
+            "id" : "HND"
+        },
+        "Hong Kong" : {
+            "id" : "HKG"
+        },
+        "Hungary" : {
+            "id" : "HUN"
+        },
+        "Iceland" : {
+            "id" : "ISL"
+        },
+        "India" : {
+            "id" : "IND"
+        },
+        "Indonesia" : {
+            "id" : "IDN"
+        },
+        "Iran" : {
+            "id" : "IRN"
+        },
+        "Ireland" : {
+            "id" : "IRL"
+        },
+        "Israel" : {
+            "id" : "ISR"
+        },
+        "Italy" : {
+            "id" : "ITA"
+        },
+        "Jamaica" : {
+            "id" : "JAM"
+        },
+        "Japan" : {
+            "id" : "JPN"
+        },
+        "Jordan" : {
+            "id" : "JOR"
+        },
+        "Kazakhstan" : {
+            "id" : "KAZ"
+        },
+        "Kenya" : {
+            "id" : "KEN"
+        },
+        "Korea" : {
+            "id" : "KOR"
+        },
+        "Lao" : {
+            "id" : "LAO"
+        },
+        "Latvia" : {
+            "id" : "LVA"
+        },
+        "Lebanon" : {
+            "id" : "LBN"
+        },
+        "Liberia" : {
+            "id" : "LBR"
+        },
+        "Lithuania" : {
+            "id" : "LTU"
+        },
+        "Luxembourg" : {
+            "id" : "LUX"
+        },
+        "Macao" : {
+            "id" : "MAC"
+        },
+        "Macedonia" : {
+            "id" : "MKD"
+        },
+        "Madagascar" : {
+            "id" : "MDG"
+        },
+        "Malawi" : {
+            "id" : "MWI"
+        },
+        "Malaysia" : {
+            "id" : "MYS"
+        },
+        "Maldives" : {
+            "id" : "MDV"
+        },
+        "Mali" : {
+            "id" : "MLI"
+        },
+        "Malta" : {
+            "id" : "MLT"
+        },
+        "Mauritania" : {
+            "id" : "MRT"
+        },
+        "Mauritius" : {
+            "id" : "MUS"
+        },
+        "Mexico" : {
+            "id" : "MEX"
+        },
+        "Moldova" : {
+            "id" : "MDA"
+        },
+        "Mongolia" : {
+            "id" : "MNG"
+        },
+        "Morocco" : {
+            "id" : "MAR"
+        },
+        "Mozambique" : {
+            "id" : "MOZ"
+        },
+        "Myanmar" : {
+            "id" : "MMR"
+        },
+        "Namibia" : {
+            "id" : "NAM"
+        },
+        "Nepal" : {
+            "id" : "NPL"
+        },
+        "Netherlands" : {
+            "id" : "NLD"
+        },
+        "New Zealand" : {
+            "id" : "NZL"
+        },
+        "Nicaragua" : {
+            "id" : "NIC"
+        },
+        "Niger" : {
+            "id" : "NER"
+        },
+        "Nigeria" : {
+            "id" : "NGA"
+        },
+        "Norway" : {
+            "id" : "NOR"
+        },
+        "Oman" : {
+            "id" : "OMN"
+        },
+        "Pakistan" : {
+            "id" : "PAK"
+        },
+        "Panama" : {
+            "id" : "PAN"
+        },
+        "Papua New Guinea" : {
+            "id" : "PNG"
+        },
+        "Paraguay" : {
+            "id" : "PRY"
+        },
+        "Peru" : {
+            "id" : "PER"
+        },
+        "Philippines" : {
+            "id" : "PHL"
+        },
+        "Poland" : {
+            "id" : "POL"
+        },
+        "Portugal" : {
+            "id" : "PRT"
+        },
+        "Qatar" : {
+            "id" : "QAT"
+        },
+        "Romania" : {
+            "id" : "ROU"
+        },
+        "Russia" : {
+            "id" : "RUS"
+        },
+        "Rwanda" : {
+            "id" : "RWA"
+        },
+        "Santa Lucia" : {
+            "id" : "LCA"
+        },
+        "Saudi Arabia" : {
+            "id" : "SAU"
+        },
+        "Senegal" : {
+            "id" : "SEN"
+        },
+        "Serbia" : {
+            "id" : "SRB"
+        },
+        "Seychelles" : {
+            "id" : "SYC"
+        },
+        "Singapore" : {
+            "id" : "SGP"
+        },
+        "Slovakia" : {
+            "id" : "SVK"
+        },
+        "Slovenia" : {
+            "id" : "SVN"
+        },
+        "Solomon Islands" : {
+            "id" : "SLB"
+        },
+        "South Africa" : {
+            "id" : "ZAF"
+        },
+        "Spain" : {
+            "id" : "ESP"
+        },
+        "Sri Lanka" : {
+            "id" : "LKA"
+        },
+        "St. Vincent and the Grenadines" : {
+            "id" : "VCT"
+        },
+        "Swaziland" : {
+            "id" : "SWZ"
+        },
+        "Sweden" : {
+            "id" : "SWE"
+        },
+        "Switzerland" : {
+            "id" : "CHE"
+        },
+        "Syria" : {
+            "id" : "SYR"
+        },
+        "Tanzania" : {
+            "id" : "TZA"
+        },
+        "Thailand" : {
+            "id" : "THA"
+        },
+        "Togo" : {
+            "id" : "TGO"
+        },
+        "Tonga" : {
+            "id" : "TON"
+        },
+        "Trinidad & Tobago" : {
+            "id" : "TTO"
+        },
+        "Tunisia" : {
+            "id" : "TUN"
+        },
+        "Turkey" : {
+            "id" : "TUR"
+        },
+        "Turkmenistan" : {
+            "id" : "TKM"
+        },
+        "Tuvalu" : {
+            "id" : "TUV"
+        },
+        "Uganda" : {
+            "id" : "UGA"
+        },
+        "Ukraine" : {
+            "id" : "UKR"
+        },
+        "United Arab Emirates" : {
+            "id" : "ARE"
+        },
+        "United Kingdom" : {
+            "id" : "GBR"
+        },
+        "United States of America" : {
+            "id" : "USA"
+        },
+        "Uruguay" : {
+            "id" : "URY"
+        },
+        "Uzbekistan" : {
+            "id" : "UZB"
+        },
+        "Venezuela" : {
+            "id" : "VEN"
+        },
+        "Vietnam" : {
+            "id" : "VNM"
+        },
+        "Yemen" : {
+            "id" : "YEM"
+        },
+        "Zambia" : {
+            "id" : "ZMB"
+        },
+        "Zimbabwe"  : {
+            "id" : "ZWE"
+        }
+
+}
 
 var myData = {
         "AFG": {
@@ -2303,6 +2989,7 @@ function refreshMap() {
         '2': '#FFCC00',
         '3': '#009900',
         '4': '#003D14',
+        '5': '#0053CF',
         'default': '#C0C0C0',
         'select' : '#000'
       },
@@ -2314,10 +3001,14 @@ function refreshMap() {
 
 refreshMap();
 
-$("path").click(function() {
 
+$("path").click(function() {
     lastCountryString = $("#hoverid").attr("country");
     console.log(lastCountryString);
-
-
+    if(myData[lastCountryString].idi != "No Data") {
+        $("#wha_country").text("You are improving: " + myData[lastCountryString].data.nam);
+    }
+    else{
+        bootbox.alert ("Please select a country with data.");
+    }
 });
