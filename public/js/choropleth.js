@@ -26,7 +26,9 @@ $("#computers,#internet,#mobile_phones,#broadband,#education").on('click', funct
         if (this.id == "computers" && myData[lastCountryString].idi != "No Data") {
             bootbox.prompt("You are sending computers to " + myData[lastCountryString].data.nam + ". Each computer costs $200. How many computers" +
                 " would you like to send?", function(num){
-                    if (num<= 0 || num%1 != 0) {
+                    if (num == null) {
+                    }
+                    else if (num<= 0 || num%1 != 0){
                         bootbox.alert("Please enter an integer value greater than 0.");
                     }
                     else{
@@ -72,7 +74,9 @@ $("#computers,#internet,#mobile_phones,#broadband,#education").on('click', funct
             
              bootbox.prompt("10 hours of dial-up costs $12 per month. To how many households in " +
                 myData[lastCountryString].data.nam + " would you like to send Internet access?", function(num){
-                    if (num<= 0 || num%1 != 0) {
+                    if (num == null) {
+                    }
+                    else if (num<= 0 || num%1 != 0){
                         bootbox.alert("Please enter an integer value greater than 0.");
                     }
                     else{
@@ -117,7 +121,9 @@ $("#computers,#internet,#mobile_phones,#broadband,#education").on('click', funct
            
              bootbox.prompt("Each phone costs $50. How many phones would you like to send to " 
                  + myData[lastCountryString].data.nam + "?", function(num){
-                    if (num<= 0 || num%1 != 0) {
+                    if (num == null) {
+                    }
+                    else if (num<= 0 || num%1 != 0){
                         bootbox.alert("Please enter an integer value greater than 0.");
                     }
                     else{
@@ -163,7 +169,9 @@ $("#computers,#internet,#mobile_phones,#broadband,#education").on('click', funct
            
              bootbox.prompt("The price of a fixed-broadband subscription is $57. How many broadband " 
                 + "subscriptions would you like to send to " + myData[lastCountryString].data.nam + "?", function(num){
-                    if (num<= 0 || num%1 != 0) {
+                    if (num == null) {
+                    }
+                    else if (num<= 0 || num%1 != 0){
                         bootbox.alert("Please enter an integer value greater than 0.");
                     }
                     else{
@@ -209,7 +217,9 @@ $("#computers,#internet,#mobile_phones,#broadband,#education").on('click', funct
            
              bootbox.prompt("How much money would you like to send to improve education in " 
                     + myData[lastCountryString].data.nam + " ?", function(num){
-                    if (num<= 0 || num%1 != 0) {
+                    if (num == null) {
+                    }
+                    else if (num<= 0 || num%1 != 0){
                         bootbox.alert("Please enter an integer value greater than 0.");
                     }
                     else{
