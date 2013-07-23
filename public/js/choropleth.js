@@ -1,99 +1,3 @@
-$("#internet").click(function() {
-
-    if (lastCountryString == ""){
-        bootbox.alert("Please select a country first.");
-    }
-    if (lastCountryString != "" && myData[lastCountryString].idi != "No Data") {
-          
-        myData[lastCountryString].idi = parseFloat(updateIDI(lastCountryString, "#internet")).toFixed(2);
-        myData[lastCountryString].fillKey = String(Math.floor(myData[lastCountryString].idi/2));
-    
-
-        $("#map_world").empty();
-        refreshMap();
-
-        $("path").click(function() {
-            lastCountryString = $("#hoverid").attr("country");
-            console.log(lastCountryString);
-            $("#wha_country").text("You are improving: " + myData[lastCountryString].data.nam);
-        });
-
-    }
-
-
-});
-
-$("#mobile_phones").click(function() {
-
-
-   if (lastCountryString == ""){
-        bootbox.alert("Please select a country first.");
-    }
-    if (lastCountryString != "" && myData[lastCountryString].idi != "No Data") {
-          
-        myData[lastCountryString].idi = parseFloat(updateIDI(lastCountryString, "#mobile_phones")).toFixed(2);
-        myData[lastCountryString].fillKey = String(Math.floor(myData[lastCountryString].idi/2));
-    
-
-        $("#map_world").empty();
-        refreshMap();
-
-        $("path").click(function() {
-        lastCountryString = $("#hoverid").attr("country");
-        });
-
-    }
-
-
-});
-
-$("#broadband").click(function() {
-          
-    if (lastCountryString == ""){
-        bootbox.alert("Please select a country first.");
-    }
-    if (lastCountryString != "" && myData[lastCountryString].idi != "No Data") {
-          
-        myData[lastCountryString].idi = parseFloat(updateIDI(lastCountryString, "#broadband")).toFixed(2);
-        myData[lastCountryString].fillKey = String(Math.floor(myData[lastCountryString].idi/2));
-    
-
-        $("#map_world").empty();
-        refreshMap();
-
-        $("path").click(function() {
-        lastCountryString = $("#hoverid").attr("country");
-        });
-
-    }
-
-
-});
-
-$("#education").click(function() {
-       
-
-    if (lastCountryString == ""){
-        bootbox.alert("Please select a country first.");
-    }
-    if (lastCountryString != "" && myData[lastCountryString].idi != "No Data") {
-          
-        myData[lastCountryString].idi = parseFloat(updateIDI(lastCountryString, "#education")).toFixed(2);
-        myData[lastCountryString].fillKey = Math.floor(myData[lastCountryString].idi/2);
-    
-
-        $("#map_world").empty();
-        refreshMap();
-
-        $("path").click(function() {
-        lastCountryString = $("#hoverid").attr("country");
-        });
-
-    }
-
-
-});
-
 $("#reset").click(function() {
    
    location.reload();
@@ -133,15 +37,20 @@ $("#computers,#internet,#mobile_phones,#broadband,#education").on('click', funct
 
                         // Update the data.
                         myData[lastCountryString].idi = parseFloat(updateIDI(lastCountryString, "#computers", num)).toFixed(2);
-
                         myData[lastCountryString].fillKey = String(Math.floor(myData[lastCountryString].idi/2));
                        
 
-                        if(myData[lastCountryString].idi >10){
+                        if(myData[lastCountryString].idi >10 && myData[lastCountryString].idi <20) {
                             myData[lastCountryString].fillKey = fill(Math.floor(myData[lastCountryString].idi/2));
+                            myData[lastCountryString].idi = (myData[lastCountryString].idi/2).toFixed(2);
+                        }
+
+                        if(myData[lastCountryString].idi >20){
                             myData[lastCountryString].idi = 10;
+                            myData[lastCountryString].fillKey = '5';
+ 
                             bootbox.alert("Congrulations! You have fully improved " + myData[lastCountryString].data.nam + " However, " + 
-                                "you spent way too much money.");
+                            "you spent way too much money.");
                         }
 
                         // Clear the map.
@@ -161,19 +70,185 @@ $("#computers,#internet,#mobile_phones,#broadband,#education").on('click', funct
         }
         else if (this.id == "internet") {
             
-            total += incre_web;
+             bootbox.prompt("10 hours of dial-up costs $12 per month. To how many households in " +
+                myData[lastCountryString].data.nam + " would you like to send Internet access?", function(num){
+                    if (num<= 0 || num%1 != 0) {
+                        bootbox.alert("Please enter an integer value greater than 0.");
+                    }
+                    else{
+                        // Set the total number.
+                        total += (num *incre_web);
+                        real_total += total;
+                        $('#output').text("$" + convertNumToStringWithCommas(real_total));
+
+                        // Update the data.
+                        myData[lastCountryString].idi = parseFloat(updateIDI(lastCountryString, "#internet", num)).toFixed(2);
+                        myData[lastCountryString].fillKey = String(Math.floor(myData[lastCountryString].idi/2));
+                       
+
+                        if(myData[lastCountryString].idi >10 && myData[lastCountryString].idi <20) {
+                            myData[lastCountryString].fillKey = fill(Math.floor(myData[lastCountryString].idi/2));
+                            myData[lastCountryString].idi = (myData[lastCountryString].idi/2).toFixed(2);
+                        }
+
+                        if(myData[lastCountryString].idi >20){
+                            myData[lastCountryString].idi = 10;
+                            myData[lastCountryString].fillKey = '5';
+ 
+                            bootbox.alert("Congrulations! You have fully improved " + myData[lastCountryString].data.nam + " However, " + 
+                            "you spent way too much money.");
+                        }
+
+                        // Clear the map.
+                        $("#map_world").empty();
+                        refreshMap();
+
+
+                        // Re-set the click function on every country path since we have emptied the map (deleted all the click functionality too).
+                        $("path").click(function() {
+                        lastCountryString = $("#hoverid").attr("country");
+                        console.log(lastCountryString);
+                        $("#wha_country").text("You are improving: " + myData[lastCountryString].data.nam);
+                        });
+                    }
+             }); 
         }
         else if (this.id == "mobile_phones"){
            
-            total += incre_mphone;
+             bootbox.prompt("Each phone costs $50. How many phones would you like to send to " 
+                 + myData[lastCountryString].data.nam + "?", function(num){
+                    if (num<= 0 || num%1 != 0) {
+                        bootbox.alert("Please enter an integer value greater than 0.");
+                    }
+                    else{
+                        // Set the total number.
+                        total += (num *incre_mphone);
+                        real_total += total;
+                        $('#output').text("$" + convertNumToStringWithCommas(real_total));
+
+                        // Update the data.
+                        myData[lastCountryString].idi = parseFloat(updateIDI(lastCountryString, "#mobile_phones", num)).toFixed(2);
+                        myData[lastCountryString].fillKey = String(Math.floor(myData[lastCountryString].idi/2));
+                       
+
+                        if(myData[lastCountryString].idi >10 && myData[lastCountryString].idi <20) {
+                            myData[lastCountryString].fillKey = fill(Math.floor(myData[lastCountryString].idi/2));
+                            myData[lastCountryString].idi = (myData[lastCountryString].idi/2).toFixed(2);
+                        }
+
+                        if(myData[lastCountryString].idi >20){
+                            myData[lastCountryString].idi = 10;
+                            myData[lastCountryString].fillKey = '5';
+ 
+                            bootbox.alert("Congrulations! You have fully improved " + myData[lastCountryString].data.nam + " However, " + 
+                            "you spent way too much money.");
+                        }
+
+                        // Clear the map.
+                        $("#map_world").empty();
+                        refreshMap();
+
+
+                        // Re-set the click function on every country path since we have emptied the map (deleted all the click functionality too).
+                        $("path").click(function() {
+                        lastCountryString = $("#hoverid").attr("country");
+                        console.log(lastCountryString);
+                        $("#wha_country").text("You are improving: " + myData[lastCountryString].data.nam);
+                        });
+                    }
+            });
+            
         }
         else if (this.id == "broadband"){
            
-            total += incre_broadband;
+             bootbox.prompt("The price of a fixed-broadband subscription is $57. How many broadband " 
+                + "subscriptions would you like to send to " + myData[lastCountryString].data.nam + "?", function(num){
+                    if (num<= 0 || num%1 != 0) {
+                        bootbox.alert("Please enter an integer value greater than 0.");
+                    }
+                    else{
+                        // Set the total number.
+                        total += (num *incre_broadband);
+                        real_total += total;
+                        $('#output').text("$" + convertNumToStringWithCommas(real_total));
+
+                        // Update the data.
+                        myData[lastCountryString].idi = parseFloat(updateIDI(lastCountryString, "#broadband", num)).toFixed(2);
+                        myData[lastCountryString].fillKey = String(Math.floor(myData[lastCountryString].idi/2));
+                       
+
+                        if(myData[lastCountryString].idi >10 && myData[lastCountryString].idi <20) {
+                            myData[lastCountryString].fillKey = fill(Math.floor(myData[lastCountryString].idi/2));
+                            myData[lastCountryString].idi = (myData[lastCountryString].idi/2).toFixed(2);
+                        }
+
+                        if(myData[lastCountryString].idi >20){
+                            myData[lastCountryString].idi = 10;
+                            myData[lastCountryString].fillKey = '5';
+ 
+                            bootbox.alert("Congrulations! You have fully improved " + myData[lastCountryString].data.nam + " However, " + 
+                            "you spent way too much money.");
+                        }
+
+                        // Clear the map.
+                        $("#map_world").empty();
+                        refreshMap();
+
+
+                        // Re-set the click function on every country path since we have emptied the map (deleted all the click functionality too).
+                        $("path").click(function() {
+                        lastCountryString = $("#hoverid").attr("country");
+                        console.log(lastCountryString);
+                        $("#wha_country").text("You are improving: " + myData[lastCountryString].data.nam);
+
+                     });
+                }
+            });
         }
         else if (this.id == "education"){
            
-            total += incre_literacy;
+             bootbox.prompt("How much money would you like to send to improve education in " 
+                    + myData[lastCountryString].data.nam + " ?", function(num){
+                    if (num<= 0 || num%1 != 0) {
+                        bootbox.alert("Please enter an integer value greater than 0.");
+                    }
+                    else{
+                        // Set the total number.
+                        total += (num *incre_literacy);
+                        real_total += total;
+                        $('#output').text("$" + convertNumToStringWithCommas(real_total));
+
+                        // Update the data.
+                        myData[lastCountryString].idi = parseFloat(updateIDI(lastCountryString, "#education", num)).toFixed(2);
+                        myData[lastCountryString].fillKey = String(Math.floor(myData[lastCountryString].idi/2));
+                       
+
+                        if(myData[lastCountryString].idi >10 && myData[lastCountryString].idi <20) {
+                            myData[lastCountryString].fillKey = fill(Math.floor(myData[lastCountryString].idi/2));
+                            myData[lastCountryString].idi = (myData[lastCountryString].idi/2).toFixed(2);
+                        }
+
+                        if(myData[lastCountryString].idi >20){
+                            myData[lastCountryString].idi = 10;
+                            myData[lastCountryString].fillKey = '5';
+ 
+                            bootbox.alert("Congrulations! You have fully improved " + myData[lastCountryString].data.nam + " However, " + 
+                            "you spent way too much money.");
+                        }
+
+                        // Clear the map.
+                        $("#map_world").empty();
+                        refreshMap();
+
+
+                        // Re-set the click function on every country path since we have emptied the map (deleted all the click functionality too).
+                        $("path").click(function() {
+                        lastCountryString = $("#hoverid").attr("country");
+                        console.log(lastCountryString);
+                        $("#wha_country").text("You are improving: " + myData[lastCountryString].data.nam);
+                         });
+                    }
+            });
         }
     }
     else {
@@ -188,36 +263,53 @@ $("#computers,#internet,#mobile_phones,#broadband,#education").on('click', funct
 
 function updateIDI(countryString, button, amount){
     var country = myData[countryString].data;
+    alert(button);
     for (value in country) console.log(value+": "+country[value]);
     if (button!=""){
-        if (button = "#computers" && amount !=0){
-            country.percomp += (1000*amount*400/country.population);
+        if (button == "#computers" && amount !=0){
+            country.percomp += (400*amount/country.population);
         }
-        else if (button = "#internet" && amount != 0){
-            country.perweb += (1000*amount*400/country.population);
+        else if (button == "#internet" && amount != 0 /* MAX 100 */){
+            country.perweb += (400*amount/country.population);
         }
-        else if (button = "#mobile_phones" && amount !=0){
-            country.mphone += (1000*amount*100/country.population);
+        else if (button == "#mobile_phones" && amount !=0){
+            console.log (amount + "here!!");
+            country.mphone += (10000*amount/country.population);
         }
-        else if (button = "#broadband" && amount != 0){
-            country.fbroadband += (1000*amount*100/country.population);
+        else if (button == "#broadband" && amount != 0){
+            country.fbroadband += (10000*amount/country.population);
         }
-        else if (button = "#education" && amount != 0){
-            country.literacy += (1000*amount/country.population);
+        else if (button == "#education" && amount != 0 /*MAX 100*/){
+            country.literacy += (100*amount/country.population);
         }
     }
-   
-    var a = country.fphone;
-    var b = country.mphone;
-    var c = country.bandwidth;
-    var d = country.percomp;
-    var e = country.perweb;
-    var f = country.internet;
-    var g = country.fbroadband;
-    var h = country.mbroadband;
-    var i = country.literacy;
-    var j = country.secondary;
-    var k = country.tertiary;
+
+    if (country.percomp >100) {
+        bootbox.alert("Everyone already has a computer! Try sending other resources.");
+        country.percomp = 100;
+    }
+    if (country.perweb > 100) {
+        bootbox.alert("Everyone is already connected to the Internet! Try sending other resources.");
+        country.perweb = 100;
+    }
+    if (country.mphone > 180){
+        bootbox.alert("Enough people have mobile phones! Try sending other resources.");
+        country.mphone = 180;
+    } 
+    if (country.fbroadband > 60) {
+        bootbox.alert("Enough people have fixed-broadband subscriptions! Try sending other resources");
+        country.fbroadband = 60;
+    }
+    if (country.literacy > 100) {
+        bootbox.alert("Everyone is already literate! Try sending other resources.");
+        country.literacy = 100;
+    }
+
+    /*
+    if (country.percomp == 100 && country.perweb == 100 && country.mphone == 180 && country.fbroadband == 60 && country.literacy == 100) {
+        bootbox.alert("You have bridged the Digital Divide for this country! Please select another country.");
+    }
+    */
 
     for (value in country) console.log(value+": "+country[value]);
 
@@ -623,6 +715,7 @@ $(function() {
     $( "#tags" ).autocomplete({
       source: avail_countries
     });
+    $( "#tags" ).autocomplete({ minLength: 3 });
 });
 
 $( "#tags" ).on( "autocompleteselect", function( e, ui ) {
@@ -1879,7 +1972,7 @@ var myData = {
             "rank": IDN.rank,
             "idi": IDN.idi,
             "data": IDN,
-            "original": 3.11
+            "original": 3.19
         },
         "IRN": {
             "cid" : "IRN",
@@ -2248,7 +2341,7 @@ var myData = {
             "rank": NAM.rank,
             "idi": NAM.idi,
             "data": NAM,
-            "original": 2.54
+            "original": 2.51
         },
         "NRU": {
             "cid" : "NRU",
