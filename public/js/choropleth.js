@@ -273,7 +273,6 @@ $("#computers,#internet,#mobile_phones,#broadband,#education").on('click', funct
 
 function updateIDI(countryString, button, amount){
     var country = myData[countryString].data;
-    alert(button);
     for (value in country) console.log(value+": "+country[value]);
     if (button!=""){
         if (button == "#computers" && amount !=0){
